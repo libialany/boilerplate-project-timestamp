@@ -1,7 +1,6 @@
-// index.js
-// where your node app starts
-
-// init project
+//  Timestamp Microservice
+// 
+//
 var express = require('express');
 var app = express();
 
