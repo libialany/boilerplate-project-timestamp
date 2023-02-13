@@ -17,30 +17,24 @@ app.use(express.static('public'));
 app.get("/", function(req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
-
-function converttounix(date) {
-  return Math.floor(new Date(date).getTime())// / 1000)
-}
-function converttodate(unixdate) {
-  let aux=unixdate/1000
-  return new Date(aux *1000);
-}
 app.get("/api/:date?", function(req, res) {
-  let { date } = req.params;
-  let timeInMillisecond;
-  let timeInDate;
-  if (date.includes('-')) {
-    timeInDate = new Date(date).toUTCString()
-    let curdate = new Date(date).getTime();
-    if (!curdate) {
-      return res.json({ error: "Invalid Date" });
-    }
-    timeInMillisecond = converttounix(date);
-  } else {
-    timeInMillisecond = parseInt(date)
-    timeInDate = converttodate(date).toUTCString()
+ let {date } = req.params;  
+if(!date){
+  return res.json({ unix: new Date().getTime() , utc: new Date().toUTCString() })  
+}
+let timeInMillisecond;
+let timeInDate;
+if (date.includes('-')) {
+  timeInDate = new Date(date).toUTCString()
+  if (!timeInDate) {
+    return res.json({ error: "Invalid Date" });
   }
-  res.json({ unix: timeInMillisecond, utc: timeInDate })
+  timeInMillisecond = new Date(date).getTime();
+} else {
+  timeInMillisecond = parseInt(date)
+  timeInDate = new Date(parseInt(date)).toUTCString()
+}
+res.json({ unix: timeInMillisecond, utc: timeInDate })
 })
 
 // listen for requests :)
