@@ -26,7 +26,7 @@ let timeInMillisecond;
 let timeInDate;
 if (date.includes('-')) {
   timeInDate = new Date(date).toUTCString()
-  if (!timeInDate) {
+  if (timeInDate==='Invalid Date') {
     return res.json({ error: "Invalid Date" });
   }
   timeInMillisecond = new Date(date).getTime();
