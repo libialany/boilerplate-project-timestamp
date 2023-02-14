@@ -13,30 +13,25 @@ app.use(cors({ optionsSuccessStatus: 200 }));  // some legacy browsers choke on 
 app.use(express.static('public'));
 
 // http://expressjs.com/en/starter/basic-routing.html
-app.get("/", function(req, res) {
+app.get("/", function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
-app.get("/api/:date?", function(req, res) {
- let {date } = req.params;  
-if(!date){
-  return res.json({ unix: new Date().getTime() , utc: new Date().toUTCString() })  
-}
-let timeInMillisecond;
-let timeInDate;
-if (date.toString().includes('-')) {
-  timeInDate = new Date(date).toUTCString()
-  if (timeInDate.toString()==='Invalid Date') {
-    return res.json({ error: "Invalid Date" });
+app.get("/api/:dateString?", function (req, res) {
+  let { dateString } = req.params;
+  console.log(dateString);
+  if (!dateString) {
+    return res.json({ unix: new Date().getTime(), utc: new Date().toUTCString() })
   }
-  timeInMillisecond = new Date(date).getTime();
-} else {
-  timeInMillisecond = parseInt(date)
-  timeInDate = new Date(parseInt(date)).toUTCString()
-}
-res.json({ unix: timeInMillisecond, utc: timeInDate })
+  const date = !isNaN(dateString) ?
+    new Date(parseInt(dateString)) :
+    new Date(dateString);
+  if (date.toString() === "Invalid Date" || isNaN(date)) {
+    res.json({ error: "invalid date" });
+  }
+  res.json({ unix: date.getTime(), utc: date.toUTCString() })
 })
 
 // listen for requests :)
-var listener = app.listen(process.env.PORT, function() {
+var listener = app.listen(4000 || process.env.PORT, function () {
   console.log('Your app is listening on port ' + listener.address().port);
 });
